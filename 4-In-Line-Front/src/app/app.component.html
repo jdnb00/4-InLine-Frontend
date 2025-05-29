@@ -1,20 +1,49 @@
-<div style="text-align:center; margin-top: 50px;">
-  <h1>¡Bienvenido a mi app Angular!</h1>
-  
-  <form #miFormulario="ngForm" (ngSubmit)="enviar()">
+<div class="container">
+  <h1>4 en Línea</h1>
+
+  <!-- Formulario de configuración del tablero -->
+  <form (ngSubmit)="crearTablero()" #formulario="ngForm" class="formulario">
     <mat-form-field appearance="outline">
-      <mat-label>Nombre</mat-label>
-      <input matInput name="nombre" [(ngModel)]="nombre" required>
+      <mat-label>Filas</mat-label>
+      <input
+        matInput
+        type="number"
+        name="filas"
+        [(ngModel)]="filas"
+        min="4"
+        required
+      />
     </mat-form-field>
 
-    <br />
+    <mat-form-field appearance="outline">
+      <mat-label>Columnas</mat-label>
+      <input
+        matInput
+        type="number"
+        name="columnas"
+        [(ngModel)]="columnas"
+        min="4"
+        required
+      />
+    </mat-form-field>
 
     <button mat-raised-button color="primary" type="submit">
-      Enviar
+      Nuevo Juego
     </button>
   </form>
 
-  <div *ngIf="nombreEnviado">
-    <p>Hola, {{ nombre }}!</p>
+  <!-- Tablero generado -->
+  <div *ngIf="tablero.length > 0" class="tablero">
+    <div *ngFor="let fila of tablero; let i = index" class="fila">
+      <div
+        *ngFor="let celda of fila; let j = index"
+        class="celda"
+        [class.clickeable]="i === 0"
+        (click)="i === 0 && jugar(j)"
+      >
+        {{ celda }}
+      </div>
+    </div>
   </div>
+
 </div>
