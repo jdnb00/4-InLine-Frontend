@@ -1,0 +1,20 @@
+<div style="text-align:center; margin-top: 50px;">
+  <h1>¡Bienvenido a mi app Angular!</h1>
+  
+  <form #miFormulario="ngForm" (ngSubmit)="enviar()">
+    <mat-form-field appearance="outline">
+      <mat-label>Nombre</mat-label>
+      <input matInput name="nombre" [(ngModel)]="nombre" required>
+    </mat-form-field>
+
+    <br />
+
+    <button mat-raised-button color="primary" type="submit">
+      Enviar
+    </button>
+  </form>
+
+  <div *ngIf="nombreEnviado">
+    <p>Hola, {{ nombre }}!</p>
+  </div>
+</div>
