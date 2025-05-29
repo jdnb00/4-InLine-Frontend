@@ -1,8 +1,12 @@
 import { Component } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
-type JugadaDto = [number, number, boolean, number];
-
+type JugadaDto = {
+  item1: number; // fila
+  item2: number; // columna
+  item3: boolean; // marcada
+  item4: number; // jugador
+};
 interface PostNuevaJugadaResultDto {
   matrizJugadas: JugadaDto[];
   finalizado: boolean;
@@ -15,6 +19,7 @@ interface PostNuevaJugadaResultDto {
 })
 export class AppComponent {
   title = '4-In-Line-Front';
+  UrlBase: string = 'https://localhost:7075/4InLine/api/'
   nombre: string = '';
   nombreEnviado: boolean = false;
   
@@ -42,28 +47,27 @@ export class AppComponent {
       columnas: this.columnas,
     };
 
-
-    this.http.post<string[][]>('http://tu-api.com/api/juego', body)
+    this.http.post<string[][]>(this.UrlBase + 'One/NuevoJuego/'+ this.columnas + "/" + this.filas, body)
       .subscribe({
       next: (respuesta) => {
         this.pintaTableroNuevo(respuesta);
       },
       error: (error) => {
-        this.pintaTableroNuevo(error);
-        // console.error('Error al crear el juego:', error);
-        // alert('No se pudo crear el tablero. Intenta de nuevo.');
+        //this.pintaTableroNuevo(error);
+        console.error('Error al crear el juego:', error);
+        alert('No se pudo crear el tablero. Intenta de nuevo.');
       },
     });
   }  
   
   pintaTableroNuevo(respuesta : any){
-    const respuesta1 = {
-      idJuego: '13456',
-      columnasMax: this.columnas,
-      filasMax: this.filas,
-      finalizado: false,
-    };
-    respuesta = respuesta1;
+    // const respuesta1 = {
+    //   idJuego: '13456',
+    //   columnasMax: this.columnas,
+    //   filasMax: this.filas,
+    //   finalizado: false,
+    // };
+    // respuesta = respuesta1;
     
     this.estilosTablero = Array.from({ length: respuesta.filasMax }, () =>
       Array(respuesta.columnasMax).fill('')
@@ -95,34 +99,34 @@ export class AppComponent {
     columnaSeleccionada: columna
   };
 
-  this.http.post<PostNuevaJugadaResultDto>('http://tu-api.com/api/jugada', body)
+  this.http.post<PostNuevaJugadaResultDto>(this.UrlBase + 'One/NuevaJugada/'+ this.idJuego + '/' + this.turnoJugador + '/' + columna, body)
     .subscribe({
       next: (respuesta) => {
-      this.procesarRespuestaJugada();
+      this.procesarRespuestaJugada(respuesta);
       }, 
       error: (err) => {
       console.error('Error al hacer jugada:', err);
-      this.procesarRespuestaJugada();
+      //this.procesarRespuestaJugada(respuesta);
       }
     });
   }
 
-  procesarRespuestaJugada() {
-    const respuesta1: PostNuevaJugadaResultDto = {
-      matrizJugadas: [
-        [5, 0, true, 0], //serie ganadora
-        [5, 1, true, 0], //serie ganadora
-        [5, 2, true, 0], //serie ganadora
-        [5, 3, true, 0], //serie ganadora
+  procesarRespuestaJugada(respuesta: PostNuevaJugadaResultDto) {
+    // const respuesta1: PostNuevaJugadaResultDto = {
+    //   matrizJugadas: [
+    //     { item1: 5, item2: 0, item3: true, item4: 0 }, // serie ganadora
+    //     { item1: 5, item2: 1, item3: true, item4: 0 },
+    //     { item1: 5, item2: 2, item3: true, item4: 0 },
+    //     { item1: 5, item2: 3, item3: true, item4: 0 },
 
-        [5, 4, false, 1], //serie perdedora
-        [5, 5, false, 1], //serie perdedora
-        [5, 6, false, 1], //serie perdedora
-        [4, 6, false, 1], //serie perdedora
-      ],
-      finalizado: true,
-    };
-    var respuesta : PostNuevaJugadaResultDto  = respuesta1;
+    //     { item1: 5, item2: 4, item3: false, item4: 1 }, // serie perdedora
+    //     { item1: 5, item2: 5, item3: false, item4: 1 },
+    //     { item1: 5, item2: 6, item3: false, item4: 1 },
+    //     { item1: 4, item2: 6, item3: false, item4: 1 },
+    //   ],
+    //   finalizado: true,
+    // };
+    // respuesta = respuesta1;
 
     // Actualiza el estado finalizado
     this.finalizado = respuesta.finalizado;
@@ -136,7 +140,7 @@ export class AppComponent {
     }
 
     // Aplicar jugadas
-    respuesta.matrizJugadas.forEach(([fila, columna, esGanadora, jugador]) => {
+    respuesta.matrizJugadas.forEach(({ item1: fila, item2: columna, item3: esGanadora, item4: jugador }) => {
       this.tablero[fila][columna] = jugador === 0 ? 'X' : 'O';
       if (esGanadora) {
         this.estilosTablero[fila][columna] = 'ganadora';
@@ -157,12 +161,11 @@ export class AppComponent {
   }
   
   pintarGanador(respuesta: PostNuevaJugadaResultDto) {
-    const jugadaGanadora = respuesta.matrizJugadas.find(jugada => jugada[2]); // [fila, columna, true, jugador]
+    const jugadaGanadora = respuesta.matrizJugadas.find(jugada => jugada.item3); // item3 = esGanadora
     if (jugadaGanadora) {
-      this.ganador = jugadaGanadora[3]; // jugador
+      this.ganador = jugadaGanadora.item4; // item4 = jugador
     }
   }
-
   enviar() {
     if (this.nombre.trim()) {
       this.nombreEnviado = true;
