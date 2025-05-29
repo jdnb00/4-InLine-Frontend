@@ -38,13 +38,16 @@
       <div
         *ngFor="let celda of fila; let j = index"
         class="celda"
-        [class.clickeable]="i === 0"
+        [class.clickeable]="i === 0 && !finalizado"
         [class.ganadora]="estilosTablero[i][j] === 'ganadora'"
-        (click)="i === 0 && jugar(j)"
+        (click)="i === 0 && !finalizado && jugar(j)"
       >
         {{ celda }}
       </div>
     </div>
   </div>
 
+  <div *ngIf="finalizado && ganador !== null" class="mensaje-ganador">
+  🏆 Ganador: Player {{ ganador + 1 }}
+  </div>
 </div>

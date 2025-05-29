@@ -25,6 +25,7 @@ export class AppComponent {
   idJuego: string = '';
   finalizado: boolean = false;
   estilosTablero: string[][] = [];
+  ganador: number | null = null;
 
   constructor(private http: HttpClient) {}
 
@@ -121,27 +122,35 @@ export class AppComponent {
     // Actualiza el estado finalizado
     this.finalizado = respuesta.finalizado;
 
-    // Reset tablero visual y estilos
-  for (let i = 0; i < this.tablero.length; i++) {
-    for (let j = 0; j < this.tablero[i].length; j++) {
-      this.tablero[i][j] = '';
-      this.estilosTablero[i][j] = '';
+      // Reset tablero visual y estilos
+    for (let i = 0; i < this.tablero.length; i++) {
+      for (let j = 0; j < this.tablero[i].length; j++) {
+        this.tablero[i][j] = '';
+        this.estilosTablero[i][j] = '';
+      }
     }
-  }
 
-  // Aplicar jugadas
-  respuesta.matrizJugadas.forEach(([fila, columna, esGanadora, jugador]) => {
-    this.tablero[fila][columna] = jugador === 0 ? 'X' : 'O';
-    if (esGanadora) {
-      this.estilosTablero[fila][columna] = 'ganadora';
-    }
-  });
+    // Aplicar jugadas
+    respuesta.matrizJugadas.forEach(([fila, columna, esGanadora, jugador]) => {
+      this.tablero[fila][columna] = jugador === 0 ? 'X' : 'O';
+      if (esGanadora) {
+        this.estilosTablero[fila][columna] = 'ganadora';
+      }
+    });
 
     if (this.finalizado) {
       alert('¡Juego terminado!');
+      this.pintarGanador(respuesta);
     }
   }
-
+  
+  pintarGanador(respuesta: PostNuevaJugadaResultDto) {
+    const jugadaGanadora = respuesta.matrizJugadas.find(jugada => jugada[2]); // [fila, columna, true, jugador]
+    if (jugadaGanadora) {
+      this.ganador = jugadaGanadora[3]; // jugador
+    }
+  }
+  
   enviar() {
     if (this.nombre.trim()) {
       this.nombreEnviado = true;
