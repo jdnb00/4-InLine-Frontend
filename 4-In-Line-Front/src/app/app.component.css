@@ -64,3 +64,10 @@
   margin: 16px 0;
   text-align: center;
 }
+
+.turno-jugador {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 12px;
+  color: #5e35b1;
+}

@@ -27,6 +27,8 @@ export class AppComponent {
   estilosTablero: string[][] = [];
   ganador: number | null = null;
 
+  turnoJugador: number = 0; // 0 = Player 1, 1 = Player 2
+
   constructor(private http: HttpClient) {}
 
   crearTablero() {
@@ -75,6 +77,9 @@ export class AppComponent {
     this.tablero = Array.from({ length: respuesta.filasMax }, () =>
       Array(respuesta.columnasMax).fill('')
     );
+
+    // 🔄 Reiniciar turno al jugador 1
+    this.turnoJugador = 0;
   }
 
   jugar(columna: number) {
@@ -142,6 +147,13 @@ export class AppComponent {
       alert('¡Juego terminado!');
       this.pintarGanador(respuesta);
     }
+    else{
+      // Simulamos una jugada por ahora
+      console.log(`Jugador ${this.turnoJugador + 1}`);
+      // Cambiar turno si el juego no ha terminado
+      this.turnoJugador = this.turnoJugador === 0 ? 1 : 0;
+    }
+
   }
   
   pintarGanador(respuesta: PostNuevaJugadaResultDto) {
@@ -150,7 +162,7 @@ export class AppComponent {
       this.ganador = jugadaGanadora[3]; // jugador
     }
   }
-  
+
   enviar() {
     if (this.nombre.trim()) {
       this.nombreEnviado = true;

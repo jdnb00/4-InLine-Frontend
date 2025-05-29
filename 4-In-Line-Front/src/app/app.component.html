@@ -31,7 +31,11 @@
       Nuevo Juego
     </button>
   </form>
-
+  
+  <div *ngIf="tablero.length > 0 && !finalizado" class="turno-jugador">
+    🎮 Turno: Player {{ turnoJugador + 1 }}
+  </div>
+  
   <!-- Tablero generado -->
   <div *ngIf="tablero.length > 0" class="tablero">
     <div *ngFor="let fila of tablero; let i = index" class="fila">
