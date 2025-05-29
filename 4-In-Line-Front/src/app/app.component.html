@@ -39,6 +39,7 @@
         *ngFor="let celda of fila; let j = index"
         class="celda"
         [class.clickeable]="i === 0"
+        [class.ganadora]="estilosTablero[i][j] === 'ganadora'"
         (click)="i === 0 && jugar(j)"
       >
         {{ celda }}

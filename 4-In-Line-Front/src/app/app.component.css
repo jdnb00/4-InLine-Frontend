@@ -51,3 +51,8 @@
 .clickeable:hover {
   background-color: #940bac;
 }
+
+.ganadora {
+  background-color: #a5d6a7 !important; /* verde suave */
+  font-weight: bold;
+}
